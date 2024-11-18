@@ -15,6 +15,6 @@ public class GetOrderQueryHandler : IGetOrderQuery
     
     OrderQueryDto IGetOrderQuery.GetOrderById(int id)
     {
-        throw new System.NotImplementedException();
+        return _repository.GetOrderById(id);
     }
 }

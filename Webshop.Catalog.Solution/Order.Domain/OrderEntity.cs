@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Order.Domain;
+﻿namespace Order.Domain;
 
 public class OrderEntity
 {
@@ -13,7 +11,7 @@ public class OrderEntity
     public OrderEntity(string customerName, int quantity, double price, string status)
     {
         OrderNumber = Guid.NewGuid().ToString();
-        OrderDate = DateTime.Now;
+        OrderDate = DateTime.Now.ToUniversalTime();
         CustomerName = customerName;
         Quantity = quantity;
         Price = price;
@@ -29,16 +27,13 @@ public class OrderEntity
     public double Price { get; private set; }
     public double TotalAmount { get; private set; }
     public string Status { get; private set; }
-    [Timestamp]
-    public byte[] RowVersion { get; private set; }
 
-    public void Edit(string customerName, int quantity, double price, string status, byte[] rowVersion)
+    public void Edit(string customerName, int quantity, double price, string status)
     {
         CustomerName = customerName;
         Quantity = quantity;
         Price = price;
         TotalAmount = Quantity * Price;
         Status = status;
-        RowVersion = rowVersion;
     }
 }

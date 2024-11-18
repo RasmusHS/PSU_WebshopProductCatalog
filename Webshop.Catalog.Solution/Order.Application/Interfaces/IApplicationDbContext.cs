@@ -7,8 +7,7 @@ namespace Order.Application.Interfaces;
 
 public interface IApplicationDbContext
 {
-    public IDbConnection Connection { get; }
     DatabaseFacade Database { get; }
     public DbSet<OrderEntity> Orders { get; set; }
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

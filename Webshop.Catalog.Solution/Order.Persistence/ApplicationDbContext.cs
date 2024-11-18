@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Order.Application.Interfaces;
 using Order.Domain;
+using Order.Persistence.Config;
 
 namespace Order.Persistence;
 
@@ -12,10 +13,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     }
     
     public DbSet<OrderEntity> Orders { get; set; }
-    public IDbConnection Connection => Database.GetDbConnection();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.ApplyConfiguration(new OrderConfig());
     }
 }

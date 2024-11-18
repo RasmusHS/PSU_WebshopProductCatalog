@@ -15,6 +15,6 @@ public class GetAllOrdersQueryHandler : IGetAllOrdersQuery
     
     IEnumerable<OrderQueryDto> IGetAllOrdersQuery.GetAllOrders()
     {
-        throw new System.NotImplementedException();
+        return _repository.GetAllOrders();
     }
 }

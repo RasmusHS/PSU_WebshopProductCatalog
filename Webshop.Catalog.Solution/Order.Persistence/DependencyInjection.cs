@@ -18,8 +18,6 @@ public static class DependencyInjection
         
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
-        services.AddScoped<IApplicationWriteDbConnection, ApplicationWriteDbConnection>();
-        services.AddScoped<IApplicationReadDbConnection, ApplicationReadDbConnection>();
         
         return services;
     }
