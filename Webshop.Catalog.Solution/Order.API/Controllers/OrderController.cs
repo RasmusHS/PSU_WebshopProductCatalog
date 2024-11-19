@@ -17,7 +17,8 @@ public class OrderController : ControllerBase
     private readonly IDeleteOrderCommand _deleteOrderCommand;
 
     public OrderController(ICreateOrderCommand createOrderCommand, IGetOrderQuery getOrderQuery, 
-        IGetAllOrdersQuery getAllOrdersQuery, IUpdateOrderCommand updateOrderCommand, IDeleteOrderCommand deleteOrderCommand)
+        IGetAllOrdersQuery getAllOrdersQuery, IUpdateOrderCommand updateOrderCommand,
+        IDeleteOrderCommand deleteOrderCommand)
     {
         _createOrderCommand = createOrderCommand;
         _getOrderQuery = getOrderQuery;

@@ -2,22 +2,37 @@
 using Order.Application.Dto;
 using Order.Application.Interfaces;
 using Order.Domain;
+using Order.Infrastructure.Messages.Events;
+using Rebus.Bus;
 
 namespace Order.Infrastructure;
 
 public class OrderRepository : IOrderRepository
 {
     private readonly IApplicationDbContext _db;
+    private readonly IBus _bus;
 
-    public OrderRepository(IApplicationDbContext db)
+    public OrderRepository(IApplicationDbContext db, IBus bus)
     {
         _db = db;
+        _bus = bus;
     }
 
-    public void CreateOrder(OrderEntity order)
+    public async void CreateOrder(OrderEntity order)
     {
-        _db.Orders.AddAsync(order);
-        _db.SaveChangesAsync();
+        _db.Orders.AddAsync(order).GetAwaiter();
+        await _db.SaveChangesAsync();
+        await _bus.Publish(new OrderCreatedEvent()
+        {
+            OrderId = order.OrderId,
+            OrderNumber = order.OrderNumber,
+            OrderDate = order.OrderDate,
+            CustomerName = order.CustomerName,
+            Quantity = order.Quantity,
+            Price = order.Price,
+            TotalAmount = order.TotalAmount,
+            Status = order.Status
+        });
     }
 
     public IEnumerable<OrderQueryDto> GetAllOrders()
@@ -62,15 +77,15 @@ public class OrderRepository : IOrderRepository
         return entity;
     }
 
-    public async void UpdateOrder(OrderEntity order)
+    public void UpdateOrder(OrderEntity order)
     {
-        await Task.Run(() => _db.Orders.Update(order));
-        await _db.SaveChangesAsync(new CancellationToken());
+        _db.Orders.Update(order);
+        _db.SaveChangesAsync(new CancellationToken());
     }
 
-    public async void DeleteOrder(OrderEntity order)
+    public void DeleteOrder(OrderEntity order)
     {
-        await Task.Run(() => _db.Orders.Remove(order));
-        await _db.SaveChangesAsync(new CancellationToken());
+        _db.Orders.Remove(order);
+        _db.SaveChangesAsync(new CancellationToken());
     }
 }

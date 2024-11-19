@@ -10,5 +10,4 @@ public record OrderQueryDto
     public double Price { get; set; }
     public double TotalAmount { get; set; }
     public string Status { get; set; } 
-    //public byte[] RowVersion { get; set; } 
 }

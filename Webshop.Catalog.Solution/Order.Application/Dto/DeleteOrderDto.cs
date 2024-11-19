@@ -1,6 +1,6 @@
 namespace Order.Application.Dto;
 
-public record DeleteOrderDto(int orderId)
+public record DeleteOrderDto
 {
-    public int OrderId { get; init; } = orderId;
+    public int OrderId { get; set; } 
 }

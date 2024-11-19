@@ -2,6 +2,8 @@ using Order.API.Utilities;
 using Order.Application;
 using Order.Infrastructure;
 using Order.Persistence;
+using Rebus.Config;
+using Rebus.Routing.TypeBased;
 
 var builder = WebApplication.CreateBuilder(args);
 
