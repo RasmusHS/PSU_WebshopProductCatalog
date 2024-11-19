@@ -22,7 +22,7 @@ public class CreateOrderCommandHandler : ICreateOrderCommand
         _bus = bus;
     }
 
-    async void ICreateOrderCommand.Create(CreateOrderDto dto)
+    void ICreateOrderCommand.Create(CreateOrderDto dto)
     {
         try
         {
@@ -33,7 +33,7 @@ public class CreateOrderCommandHandler : ICreateOrderCommand
 
             _uow.Commit();
 
-            await _bus.Publish(new OrderCreatedEvent()
+            _bus.Publish(new OrderCreatedEvent()
             {
                 OrderId = order.OrderId,
                 OrderNumber = order.OrderNumber,

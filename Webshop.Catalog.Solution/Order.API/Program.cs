@@ -15,13 +15,14 @@ builder.Services.AddSwaggerGen();
 // Add-Migration
 // Name: Initial
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
 //builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(p =>
 //{
 //    var db = p.GetRequiredService<ApplicationDbContext>();
 //    return new UnitOfWork(db);
 //});
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+
 
 var app = builder.Build();
 

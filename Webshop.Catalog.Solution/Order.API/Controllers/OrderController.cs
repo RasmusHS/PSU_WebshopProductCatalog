@@ -4,6 +4,7 @@ using Order.Application.DTO.Commands;
 using Order.Application.DTO.Queries;
 using Order.Application.Interfaces.Commands;
 using Order.Application.Interfaces.Queries;
+using Order.Crosscut;
 
 namespace Order.API.Controllers;
 
@@ -16,16 +17,18 @@ public class OrderController : ControllerBase
     private readonly IGetAllOrdersQuery _getAllOrdersQuery;
     private readonly IUpdateOrderCommand _updateOrderCommand;
     private readonly IDeleteOrderCommand _deleteOrderCommand;
+    private readonly IUnitOfWork _uow;
 
     public OrderController(ICreateOrderCommand createOrderCommand, IGetOrderQuery getOrderQuery, 
         IGetAllOrdersQuery getAllOrdersQuery, IUpdateOrderCommand updateOrderCommand,
-        IDeleteOrderCommand deleteOrderCommand)
+        IDeleteOrderCommand deleteOrderCommand, IUnitOfWork uow)
     {
         _createOrderCommand = createOrderCommand;
         _getOrderQuery = getOrderQuery;
         _getAllOrdersQuery = getAllOrdersQuery;
         _updateOrderCommand = updateOrderCommand;
         _deleteOrderCommand = deleteOrderCommand;
+        _uow = uow;
     }
 
     [HttpPost]

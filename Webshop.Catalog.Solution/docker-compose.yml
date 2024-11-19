@@ -105,7 +105,7 @@ services:
         context: .
         dockerfile: Order.API/Dockerfile
     ports:
-        - "5024:80"
+        - "5024:8080"
     environment:
         "ASPNETCORE_ENVIRONMENT": "Development"
         "ASPNETCORE_URL": "http://localhost"

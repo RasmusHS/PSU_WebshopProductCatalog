@@ -38,6 +38,7 @@ public class PaymentProcessedEventHandler : IHandleMessages<PaymentProcessedEven
         }
         catch (Exception ex)
         {
+            _uow.Rollback();
             throw new Exception("Error processing payment", ex);
         }
     }
