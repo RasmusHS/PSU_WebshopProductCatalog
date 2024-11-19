@@ -98,6 +98,55 @@ services:
       - reviewapi
     networks:
       - backtier
+  order.api:
+    image: ${DOCKER_REGISTRY-}orderapi
+    container_name: order-api
+    build:
+        context: .
+        dockerfile: Order.API/Dockerfile
+    ports:
+        - "5024:80"
+    environment:
+        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_URL": "http://localhost"
+        "ASPNETCORE_HTTP_PORT": "5024"
+        "ConnectionStrings:Database": "Host=order.db,5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true"
+        "ConnectionStrings:MessageBroker": "amqp://order-mq:5672"
+    depends_on:
+      - order.db
+      - order.mq
+    networks:
+      - backtier
+
+  order.db:
+    image: postgres:latest
+    container_name: order-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - backtier
+
+  order.mq:
+    image: rabbitmq:3-management
+    container_name: order-mq
+    hostname: order-mq
+    volumes:
+      - ./.containers/queue/data/:/var/lib/rabbitmq
+      - ./.containers/queue/log/:/var/log/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backtier
 networks:
   # The presence of these objects is sufficient to define them
   backtier: {}

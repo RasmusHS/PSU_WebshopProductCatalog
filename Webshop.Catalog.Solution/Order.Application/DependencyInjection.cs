@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IGetOrderQuery, GetOrderQueryHandler>();
         services.AddScoped<IUpdateOrderCommand, UpdateOrderCommandHandler>();
         services.AddScoped<IDeleteOrderCommand, DeleteOrderCommandHandler>();
+        //services.AddScoped<typeof(PaymentProcessedEvent), PaymentProcessedEventHandler>();
         
         return services;
     }

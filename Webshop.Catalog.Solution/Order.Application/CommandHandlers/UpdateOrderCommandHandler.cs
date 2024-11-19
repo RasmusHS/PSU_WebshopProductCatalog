@@ -1,4 +1,4 @@
-using Order.Application.Dto;
+using Order.Application.DTO.Commands;
 using Order.Application.Interfaces;
 using Order.Application.Interfaces.Commands;
 using Order.Crosscut;
@@ -27,7 +27,7 @@ public class UpdateOrderCommandHandler : IUpdateOrderCommand
             var model = _repository.LoadOrder(dto.OrderId);
 
             // DoIt
-            model.Edit(dto.CustomerName, dto.Quantity, dto.Price, dto.Status/*, dto.RowVersion*/);
+            model.Edit(dto.CustomerName, dto.Quantity, dto.Price, dto.Status);
 
             // Save
             _repository.UpdateOrder(model);

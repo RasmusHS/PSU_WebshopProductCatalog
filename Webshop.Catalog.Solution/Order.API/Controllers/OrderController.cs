@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
-using Order.Application.Dto;
+using Order.Application.DTO.Commands;
+using Order.Application.DTO.Queries;
 using Order.Application.Interfaces.Commands;
 using Order.Application.Interfaces.Queries;
 

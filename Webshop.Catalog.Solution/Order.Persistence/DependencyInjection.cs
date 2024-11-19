@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Order.Application.Interfaces;
+using Order.Application.Messages.Events;
+using Order.Crosscut.Implementation;
+using Order.Crosscut;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
 
@@ -17,14 +20,20 @@ public static class DependencyInjection
             options
                 .UseNpgsql(configuration.GetConnectionString("Database"))
                 .UseSnakeCaseNamingConvention());
-        
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>(p =>
+        {
+            var db = p.GetRequiredService<ApplicationDbContext>();
+            return new UnitOfWork(db);
+        });
+
         services.AddRebus(
             rebus => rebus
                 .Routing(r => 
                     r.TypeBased())
                 .Transport(t => 
                     t.UseRabbitMq(
-                        configuration.GetConnectionString("RabbitMQ"),
+                        configuration.GetConnectionString("MessageBroker"),
                         inputQueueName: "OrderQueue")),
             onCreated: async bus =>
             {

@@ -1,9 +1,9 @@
 using Order.API.Utilities;
 using Order.Application;
+using Order.Crosscut;
+using Order.Crosscut.Implementation;
 using Order.Infrastructure;
 using Order.Persistence;
-using Rebus.Config;
-using Rebus.Routing.TypeBased;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(p =>
+//{
+//    var db = p.GetRequiredService<ApplicationDbContext>();
+//    return new UnitOfWork(db);
+//});
 
 var app = builder.Build();
 

@@ -11,6 +11,7 @@ services:
       - backtier
     environment:
       - SERVER=webshopdatabase
+  
   seq:
     # SeQ is a framework for logging of exceptions etc
     container_name: SeQ
@@ -23,6 +24,7 @@ services:
       - backtier
     environment:
       - ACCEPT_EULA=Y
+  
   smtp4dev:
     # development time email server and client, easy to test sending emails
     container_name: smtp4dev
@@ -32,6 +34,7 @@ services:
       - 26:25
     networks:
       - backtier
+  
   paymentapi:
    # the payment API
     container_name: webshop.payment
@@ -41,6 +44,7 @@ services:
       - 8083:8080
     networks:
       - backtier  
+  
   catalogapi:
   # the catalog API
     container_name: webshop.catalog
@@ -50,6 +54,7 @@ services:
         - 8084:8080
     networks:
         - backtier
+  
   customerapi:
   # the customer API
     container_name: webshop.customer
@@ -59,6 +64,7 @@ services:
         - 8085:8080
     networks:
         - backtier
+  
   reviewapi:
    # the review API
     container_name: webshop.review
@@ -70,6 +76,7 @@ services:
       - backtier
     environment:
       - connectionstring=Server=webshopdatabase;Database=PSUReviews;User Id=sa;Password=PSU@password
+  
   sqlexpress:
   #the sql server
     container_name: webshopdatabase
@@ -85,22 +92,74 @@ services:
         - ./data:/var/opt/mssql/data
     networks:
         - backtier
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
+  
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - "8087:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #   command:
+  #     - "--config.file=/etc/prometheus/prometheus.yml"
+  #   depends_on:
+  #     - reviewapi
+  #     - customerapi
+  #     - catalogapi
+  #     - paymentapi
+  #   networks:
+  #     - backtier
+    
+  order.api:
+    image: ${DOCKER_REGISTRY-}orderapi
+    container_name: order-api
+    build:
+        context: .
+        dockerfile: Order.API/Dockerfile
     ports:
-      - "8087:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
+        - "5024:80"
+    environment:
+        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_URL": "http://localhost"
+        "ASPNETCORE_HTTP_PORT": "5024"
+        "ConnectionStrings:Database": "Host=order.db,5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true"
+        "ConnectionStrings:MessageBroker": "amqp://order-mq:5672"
     depends_on:
-      - reviewapi
-      - customerapi
-      - catalogapi
-      - paymentapi
+      - order.db
+      - order.mq
     networks:
       - backtier
+
+  order.db:
+    image: postgres:latest
+    container_name: order-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - backtier
+
+  order.mq:
+    image: rabbitmq:3-management
+    container_name: order-mq
+    hostname: order-mq
+    volumes:
+      - ./.containers/queue/data/:/var/lib/rabbitmq
+      - ./.containers/queue/log/:/var/log/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backtier
+
 networks:
   # The presence of these objects is sufficient to define them
   backtier: {}

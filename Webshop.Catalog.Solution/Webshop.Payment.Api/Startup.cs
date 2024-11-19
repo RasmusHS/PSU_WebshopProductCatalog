@@ -10,11 +10,14 @@ using Microsoft.OpenApi.Models;
 using Prometheus;
 using PSU_PaymentGateway.Repository;
 using PSU_PaymentGateway.Services;
+using Rebus.Config;
+using Rebus.Routing.TypeBased;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Webshop.Payment.Api.Messages.Events;
 
 namespace PSU_PaymentGateway
 {
@@ -48,6 +51,19 @@ namespace PSU_PaymentGateway
             services.AddSingleton<IThrottleService, ThrottleService>();
             //add healthchecks
             services.AddHealthChecks();
+
+            services.AddRebus(
+            rebus => rebus
+                .Routing(r =>
+                    r.TypeBased())
+                .Transport(t =>
+                    t.UseRabbitMq(
+                        Configuration.GetConnectionString("RabbitMQ"),
+                        inputQueueName: "OrderQueue")),
+            onCreated: async bus =>
+            {
+                await bus.Subscribe<OrderCreatedEvent>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

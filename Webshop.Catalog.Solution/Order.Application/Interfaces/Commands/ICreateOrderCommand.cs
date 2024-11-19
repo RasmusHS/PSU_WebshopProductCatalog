@@ -1,4 +1,4 @@
-using Order.Application.Dto;
+using Order.Application.DTO.Commands;
 
 namespace Order.Application.Interfaces.Commands;
 

@@ -1,4 +1,4 @@
-using Order.Application.Dto;
+using Order.Application.DTO.Queries;
 using Order.Domain;
 
 namespace Order.Application.Interfaces;
