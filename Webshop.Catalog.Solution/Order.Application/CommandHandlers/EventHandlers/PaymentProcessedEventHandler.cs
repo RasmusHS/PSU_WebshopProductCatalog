@@ -1,8 +1,7 @@
 ﻿using Order.Application.Interfaces;
-using Order.Application.Messages.Events;
 using Order.Crosscut;
 using Rebus.Handlers;
-using System.Data;
+using Shared.Messages.Events;
 
 namespace Order.Application.CommandHandlers.EventHandlers;
 
@@ -19,27 +18,39 @@ public class PaymentProcessedEventHandler : IHandleMessages<PaymentProcessedEven
 
     Task IHandleMessages<PaymentProcessedEvent>.Handle(PaymentProcessedEvent message)
     {
-        try
-        { 
-            _uow.BeginTransaction(IsolationLevel.ReadCommitted);
+        Console.WriteLine("PaymentProcessedEvent received");
+        // Read
+        var model = _repository.LoadOrder(message.OrderId);
 
-            // Read
-            var model = _repository.LoadOrder(message.OrderId);
+        // DoIt
+        model.Edit(message.CustomerName, message.Quantity, message.Price, message.Status);
 
-            // DoIt
-            model.Edit(message.CustomerName, message.Quantity, message.Price, message.Status);
+        // Save
+        _repository.UpdateOrder(model);
 
-            // Save
-            _repository.UpdateOrder(model);
+        return Task.CompletedTask;
 
-            _uow.Commit();
+        //try
+        //{ 
+        //    _uow.BeginTransaction(IsolationLevel.ReadCommitted);
 
-            return Task.CompletedTask;
-        }
-        catch (Exception ex)
-        {
-            _uow.Rollback();
-            throw new Exception("Error processing payment", ex);
-        }
+        //    // Read
+        //    var model = _repository.LoadOrder(message.OrderId);
+
+        //    // DoIt
+        //    model.Edit(message.CustomerName, message.Quantity, message.Price, message.Status);
+
+        //    // Save
+        //    _repository.UpdateOrder(model);
+
+        //    _uow.Commit();
+
+        //    return Task.CompletedTask;
+        //}
+        //catch (Exception ex)
+        //{
+        //    _uow.Rollback();
+        //    throw new Exception("Error processing payment", ex);
+        //}
     }
 }

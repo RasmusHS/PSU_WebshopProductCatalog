@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,12 +10,11 @@ using PSU_PaymentGateway.Repository;
 using PSU_PaymentGateway.Services;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
+using Rebus.Serialization.Json;
+using Rebus.Serialization;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Webshop.Payment.Api.Messages.Events;
+using Webshop.Payment.Api.Messages.Handlers;
+using Shared.Messages.Events;
 
 namespace PSU_PaymentGateway
 {
@@ -54,16 +51,22 @@ namespace PSU_PaymentGateway
 
             services.AddRebus(
             rebus => rebus
-                .Routing(r =>
-                    r.TypeBased())
+                //.Routing(r =>
+                //    r.TypeBased().Map<PaymentProcessedEvent>("OrderQueue"))
                 .Transport(t =>
-                    t.UseRabbitMq(
-                        Configuration.GetConnectionString("RabbitMQ"),
-                        inputQueueName: "OrderQueue")),
+                    t.UseRabbitMqAsOneWayClient(
+                        Configuration.GetConnectionString("MessageBroker")))
+                //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
+                //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
+                ,
             onCreated: async bus =>
             {
+                //await bus.Advanced.Topics.Subscribe("OrderCreatedEvent"); // OrderCreatedEvent
                 await bus.Subscribe<OrderCreatedEvent>();
+                //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
             });
+            services.AddRebusHandler<OrderCreatedEventHandler>();
+            //services.AutoRegisterHandlersFromAssemblyOf<OrderCreatedEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +79,7 @@ namespace PSU_PaymentGateway
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment Gateway v1"));
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

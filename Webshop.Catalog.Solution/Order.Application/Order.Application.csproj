@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Order.Crosscut\Order.Crosscut.csproj" />
       <ProjectReference Include="..\Order.Domain\Order.Domain.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

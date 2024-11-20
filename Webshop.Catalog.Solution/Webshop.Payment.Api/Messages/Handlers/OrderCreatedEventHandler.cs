@@ -1,7 +1,8 @@
 ﻿using Rebus.Bus;
 using Rebus.Handlers;
+using Shared.Messages.Events;
+using System;
 using System.Threading.Tasks;
-using Webshop.Payment.Api.Messages.Events;
 
 namespace Webshop.Payment.Api.Messages.Handlers
 {
@@ -16,7 +17,9 @@ namespace Webshop.Payment.Api.Messages.Handlers
 
         async Task IHandleMessages<OrderCreatedEvent>.Handle(OrderCreatedEvent message)
         {
-            await _bus.Publish(new PaymentProcessedEvent()
+            Console.WriteLine("OrderCreatedEvent received");
+            
+            await _bus.Publish( new PaymentProcessedEvent()
             {
                 OrderId = message.OrderId,
                 OrderNumber = message.OrderNumber,
@@ -27,6 +30,7 @@ namespace Webshop.Payment.Api.Messages.Handlers
                 TotalAmount = message.TotalAmount,
                 Status = "Payment Complete"
             });
+            Console.WriteLine("PaymentProcessedEvent published");
 
             await Task.CompletedTask;
         }

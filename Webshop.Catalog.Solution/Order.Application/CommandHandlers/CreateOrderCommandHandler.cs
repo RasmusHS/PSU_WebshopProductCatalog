@@ -1,11 +1,10 @@
 using Order.Application.DTO.Commands;
 using Order.Application.Interfaces;
 using Order.Application.Interfaces.Commands;
-using Order.Application.Messages.Events;
 using Order.Crosscut;
 using Order.Domain;
 using Rebus.Bus;
-using System.Data;
+using Shared.Messages.Events;
 
 namespace Order.Application.CommandHandlers;
 
@@ -24,31 +23,50 @@ public class CreateOrderCommandHandler : ICreateOrderCommand
 
     void ICreateOrderCommand.Create(CreateOrderDto dto)
     {
-        try
+        Console.WriteLine("CreateOrderCommand received");
+        var order = new OrderEntity(dto.CustomerName, dto.Quantity, dto.Price, dto.Status);
+        _repository.CreateOrder(order);
+        Console.WriteLine("Order created");
+
+        Console.WriteLine("Publishing OrderCreatedEvent");
+        _bus.Publish(new OrderCreatedEvent()
         {
-            _uow.BeginTransaction(IsolationLevel.ReadCommitted);
+            OrderId = order.OrderId,
+            OrderNumber = order.OrderNumber,
+            OrderDate = order.OrderDate,
+            CustomerName = order.CustomerName,
+            Quantity = order.Quantity,
+            Price = order.Price,
+            TotalAmount = order.TotalAmount,
+            Status = order.Status
+        }).Wait();
+        Console.WriteLine("OrderCreatedEvent published");
 
-            var order = new OrderEntity(dto.CustomerName, dto.Quantity, dto.Price, dto.Status);
-            _repository.CreateOrder(order);
+        //try
+        //{
+        //    _uow.BeginTransaction(IsolationLevel.ReadCommitted);
 
-            _uow.Commit();
+        //    var order = new OrderEntity(dto.CustomerName, dto.Quantity, dto.Price, dto.Status);
+        //    _repository.CreateOrder(order);
 
-            _bus.Publish(new OrderCreatedEvent()
-            {
-                OrderId = order.OrderId,
-                OrderNumber = order.OrderNumber,
-                OrderDate = order.OrderDate,
-                CustomerName = order.CustomerName,
-                Quantity = order.Quantity,
-                Price = order.Price,
-                TotalAmount = order.TotalAmount,
-                Status = order.Status
-            });
-        }
-        catch (Exception ex)
-        {
-            _uow.Rollback();
-            throw new Exception("Error creating order", ex);
-        }
+        //    _uow.Commit();
+
+        //    _bus.Advanced.Topics.Publish("OrderCreatedEvent", new OrderCreatedEvent()
+        //    {
+        //        OrderId = order.OrderId,
+        //        OrderNumber = order.OrderNumber,
+        //        OrderDate = order.OrderDate,
+        //        CustomerName = order.CustomerName,
+        //        Quantity = order.Quantity,
+        //        Price = order.Price,
+        //        TotalAmount = order.TotalAmount,
+        //        Status = order.Status
+        //    }).Wait();
+        //}
+        //catch (Exception ex)
+        //{
+        //    _uow.Rollback();
+        //    throw new Exception("Error creating order", ex);
+        //}
     }
 }

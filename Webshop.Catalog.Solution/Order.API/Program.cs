@@ -20,7 +20,7 @@ builder.Services.AddPersistence(builder.Configuration);
 //    var db = p.GetRequiredService<ApplicationDbContext>();
 //    return new UnitOfWork(db);
 //});
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure();
 
 

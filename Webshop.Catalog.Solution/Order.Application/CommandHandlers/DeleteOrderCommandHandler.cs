@@ -18,22 +18,28 @@ public class DeleteOrderCommandHandler : IDeleteOrderCommand
     
     void IDeleteOrderCommand.Delete(int id)
     {
-        try
-        {
-            _uow.BeginTransaction(IsolationLevel.ReadCommitted);
+        // Read
+        var model = _repository.LoadOrder(id);
 
-            // Read
-            var model = _repository.LoadOrder(id);
+        // DoIt
+        _repository.DeleteOrder(model);
 
-            // DoIt
-            _repository.DeleteOrder(model);
+        //try
+        //{
+        //    _uow.BeginTransaction(IsolationLevel.ReadCommitted);
 
-            _uow.Commit();
-        }
-        catch (Exception ex)
-        {
-            _uow.Rollback();
-            throw new Exception("Error deleting order", ex);
-        }
+        //    // Read
+        //    var model = _repository.LoadOrder(id);
+
+        //    // DoIt
+        //    _repository.DeleteOrder(model);
+
+        //    _uow.Commit();
+        //}
+        //catch (Exception ex)
+        //{
+        //    _uow.Rollback();
+        //    throw new Exception("Error deleting order", ex);
+        //}
     }
 }

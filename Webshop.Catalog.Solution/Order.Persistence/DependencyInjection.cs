@@ -2,11 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Order.Application.Interfaces;
-using Order.Application.Messages.Events;
 using Order.Crosscut.Implementation;
 using Order.Crosscut;
-using Rebus.Config;
-using Rebus.Routing.TypeBased;
 
 namespace Order.Persistence;
 
@@ -27,18 +24,25 @@ public static class DependencyInjection
             return new UnitOfWork(db);
         });
 
-        services.AddRebus(
-            rebus => rebus
-                .Routing(r => 
-                    r.TypeBased())
-                .Transport(t => 
-                    t.UseRabbitMq(
-                        configuration.GetConnectionString("MessageBroker"),
-                        inputQueueName: "OrderQueue")),
-            onCreated: async bus =>
-            {
-                await bus.Subscribe<OrderCreatedEvent>();
-            });
+        //services.AddRebus(
+        //    rebus => rebus
+        //        //.Routing(r =>
+        //        //    r.TypeBased().Map<OrderCreatedEvent>("OrderQueue"))
+        //        .Transport(t => 
+        //            t.UseRabbitMq(
+        //                configuration.GetConnectionString("MessageBroker"),
+        //                "OrderQueue"))
+        //        //.Subscriptions(s => s.StoreInPostgres(configuration.GetConnectionString("Database"), "OrderSubNames"))
+        //        //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
+        //        //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
+        //        ,
+        //    onCreated: async bus =>
+        //    {
+        //        //await bus.Advanced.Topics.Subscribe("OrderCreatedEvent"); // PaymentProcessedEvent
+        //        await bus.Subscribe<PaymentProcessedEvent>();
+        //        //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
+        //    });
+        //services.AddRebusHandler<PaymentProcessedEventHandler>();
         
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
