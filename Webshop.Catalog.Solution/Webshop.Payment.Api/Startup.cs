@@ -9,9 +9,6 @@ using Prometheus;
 using PSU_PaymentGateway.Repository;
 using PSU_PaymentGateway.Services;
 using Rebus.Config;
-using Rebus.Routing.TypeBased;
-using Rebus.Serialization.Json;
-using Rebus.Serialization;
 using Serilog;
 using Webshop.Payment.Api.Messages.Handlers;
 using Shared.Messages.Events;
@@ -48,14 +45,13 @@ namespace PSU_PaymentGateway
             services.AddSingleton<IThrottleService, ThrottleService>();
             //add healthchecks
             services.AddHealthChecks();
-
+            //Console.WriteLine(Configuration.GetConnectionString("MessageBroker"));
             services.AddRebus(
             rebus => rebus
-                //.Routing(r =>
-                //    r.TypeBased().Map<PaymentProcessedEvent>("OrderQueue"))
                 .Transport(t =>
-                    t.UseRabbitMqAsOneWayClient(
-                        Configuration.GetConnectionString("MessageBroker")))
+                    t.UseRabbitMq(
+                        Configuration.GetConnectionString("MessageBroker"),
+                        "PubOrderQueue"))
                 //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
                 ,
@@ -65,6 +61,7 @@ namespace PSU_PaymentGateway
                 await bus.Subscribe<OrderCreatedEvent>();
                 //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
             });
+
             services.AddRebusHandler<OrderCreatedEventHandler>();
             //services.AutoRegisterHandlersFromAssemblyOf<OrderCreatedEventHandler>();
         }

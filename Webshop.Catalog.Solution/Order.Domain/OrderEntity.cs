@@ -10,6 +10,7 @@ public class OrderEntity
 
     public OrderEntity(string customerName, int quantity, double price, string status)
     {
+        OrderId = Guid.NewGuid();
         OrderNumber = Guid.NewGuid().ToString();
         OrderDate = DateTime.Now.ToUniversalTime();
         CustomerName = customerName;
@@ -19,7 +20,7 @@ public class OrderEntity
         Status = status;
     }
     
-    public int OrderId { get; private set; } // PK
+    public Guid OrderId { get; private set; } // PK
     public string OrderNumber { get; private set; }
     public DateTime OrderDate { get; private set; }
     public string CustomerName { get; private set; }

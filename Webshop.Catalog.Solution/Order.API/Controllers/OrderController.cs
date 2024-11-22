@@ -63,7 +63,7 @@ public class OrderController : ControllerBase
     [HttpGet("{id}/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<OrderQueryDto> GetOrderById(int id)
+    public ActionResult<OrderQueryDto> GetOrderById(Guid id)
     {
         var result = _getOrderQuery.GetOrderById(id);
         
@@ -90,7 +90,7 @@ public class OrderController : ControllerBase
     [HttpDelete("DeleteOrder/{id}/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<DeleteOrderDto> Delete(int id)
+    public ActionResult<DeleteOrderDto> Delete(Guid id)
     {
         try
         {

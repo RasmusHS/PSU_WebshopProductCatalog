@@ -36,7 +36,7 @@ public class OrderRepository : IOrderRepository
             };
     }
 
-    public OrderQueryDto GetOrderById(int id)
+    public OrderQueryDto GetOrderById(Guid id)
     {
         var entity = _db.Orders.AsNoTracking().FirstOrDefault(x => x.OrderId == id);
         if (entity == null) throw new Exception("Order not found");
@@ -54,7 +54,7 @@ public class OrderRepository : IOrderRepository
         };
     }
 
-    public OrderEntity LoadOrder(int id)
+    public OrderEntity LoadOrder(Guid id)
     {
         var entity = _db.Orders.AsNoTracking().FirstOrDefault(x => x.OrderId == id);
         if (entity == null) throw new Exception("Order not found");

@@ -7,8 +7,8 @@ public interface IOrderRepository
 {
     void CreateOrder(OrderEntity order);
     IEnumerable<OrderQueryDto> GetAllOrders();
-    OrderQueryDto GetOrderById(int id);
-    OrderEntity LoadOrder(int id);
+    OrderQueryDto GetOrderById(Guid id);
+    OrderEntity LoadOrder(Guid id);
     void UpdateOrder(OrderEntity order);
     void DeleteOrder(OrderEntity order);
 }

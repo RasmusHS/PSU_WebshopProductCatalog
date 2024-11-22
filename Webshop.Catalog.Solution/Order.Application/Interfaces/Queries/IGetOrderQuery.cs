@@ -4,5 +4,5 @@ namespace Order.Application.Interfaces.Queries;
 
 public interface IGetOrderQuery
 {
-    OrderQueryDto GetOrderById(int id);
+    OrderQueryDto GetOrderById(Guid id);
 }

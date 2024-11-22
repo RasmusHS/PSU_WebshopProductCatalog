@@ -13,7 +13,7 @@ public class GetOrderQueryHandler : IGetOrderQuery
         _repository = repository;
     }
     
-    OrderQueryDto IGetOrderQuery.GetOrderById(int id)
+    OrderQueryDto IGetOrderQuery.GetOrderById(Guid id)
     {
         return _repository.GetOrderById(id);
     }

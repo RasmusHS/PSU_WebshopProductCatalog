@@ -2,7 +2,7 @@ namespace Order.Application.DTO.Queries;
 
 public record OrderQueryDto
 {
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
     public string OrderNumber { get; set; }
     public DateTime OrderDate { get; set; }
     public string CustomerName { get; set; }

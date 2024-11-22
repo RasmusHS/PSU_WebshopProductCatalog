@@ -1,7 +1,5 @@
 using Order.API.Utilities;
 using Order.Application;
-using Order.Crosscut;
-using Order.Crosscut.Implementation;
 using Order.Infrastructure;
 using Order.Persistence;
 
@@ -15,11 +13,6 @@ builder.Services.AddSwaggerGen();
 // Add-Migration
 // Name: Initial
 builder.Services.AddPersistence(builder.Configuration);
-//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(p =>
-//{
-//    var db = p.GetRequiredService<ApplicationDbContext>();
-//    return new UnitOfWork(db);
-//});
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure();
 

@@ -6,7 +6,6 @@ using Order.Application.Interfaces.Commands;
 using Order.Application.Interfaces.Queries;
 using Order.Application.QueryHandlers;
 using Rebus.Config;
-using Rebus.Routing.TypeBased;
 using Shared.Messages.Events;
 
 namespace Order.Application;
@@ -25,13 +24,10 @@ public static class DependencyInjection
 
         services.AddRebus(
             rebus => rebus
-                //.Routing(r =>
-                //    r.TypeBased().Map<OrderCreatedEvent>("OrderQueue"))
                 .Transport(t =>
-                t.UseRabbitMq(
-                        configuration.GetConnectionString("MessageBroker"),
-                        "OrderQueue"))
-                //.Subscriptions(s => s.StoreInPostgres(configuration.GetConnectionString("Database"), "OrderSubNames"))
+                    t.UseRabbitMq(
+                            configuration.GetConnectionString("MessageBroker"),
+                            "PubOrderQueue"))
                 //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
                 ,
@@ -41,8 +37,8 @@ public static class DependencyInjection
                 await bus.Subscribe<PaymentProcessedEvent>();
                 //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
             });
+
         services.AddRebusHandler<PaymentProcessedEventHandler>();
-        //services.AddScoped<typeof(PaymentProcessedEvent), PaymentProcessedEventHandler>();
 
         return services;
     }

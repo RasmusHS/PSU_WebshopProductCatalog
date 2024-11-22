@@ -24,12 +24,10 @@ namespace Order.Persistence.Migrations
 
             modelBuilder.Entity("Order.Domain.OrderEntity", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                    b.Property<Guid>("OrderId")
+                        //.ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
                         .HasColumnName("order_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrderId"));
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
