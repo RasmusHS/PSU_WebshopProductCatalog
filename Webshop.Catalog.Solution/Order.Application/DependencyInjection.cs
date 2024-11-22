@@ -27,7 +27,7 @@ public static class DependencyInjection
                 .Transport(t =>
                     t.UseRabbitMq(
                             configuration.GetConnectionString("MessageBroker"),
-                            "PubOrderQueue"))
+                            "OrderPaymentQueue"))
                 //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
                 ,

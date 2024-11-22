@@ -35,7 +35,7 @@ services:
   paymentapi:
    # the payment API
     container_name: webshop.payment
-    image: modwebshoppaymentapi:latest
+    image: local-webshoppaymentapi:latest
     build:
         context: .
         dockerfile: Webshop.Payment.Api/Dockerfile
@@ -108,7 +108,7 @@ services:
       - backtier
   order.api:
     image: ${DOCKER_REGISTRY-}orderapi
-    container_name: order-api
+    container_name: order.api
     build:
         context: .
         dockerfile: Order.API/Dockerfile

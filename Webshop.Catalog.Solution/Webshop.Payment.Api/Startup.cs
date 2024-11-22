@@ -51,7 +51,7 @@ namespace PSU_PaymentGateway
                 .Transport(t =>
                     t.UseRabbitMq(
                         Configuration.GetConnectionString("MessageBroker"),
-                        "PubOrderQueue"))
+                        "OrderPaymentQueue"))
                 //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
                 ,
