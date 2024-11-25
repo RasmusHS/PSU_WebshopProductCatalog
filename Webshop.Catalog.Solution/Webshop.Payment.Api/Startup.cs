@@ -47,20 +47,20 @@ namespace PSU_PaymentGateway
             services.AddHealthChecks();
             //Console.WriteLine(Configuration.GetConnectionString("MessageBroker"));
             services.AddRebus(
-            rebus => rebus
-                .Transport(t =>
-                    t.UseRabbitMq(
-                        Configuration.GetConnectionString("MessageBroker"),
-                        "OrderPaymentQueue"))
-                //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
-                //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
-                ,
-            onCreated: async bus =>
-            {
-                //await bus.Advanced.Topics.Subscribe("OrderCreatedEvent"); // OrderCreatedEvent
-                await bus.Subscribe<OrderCreatedEvent>();
-                //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
-            });
+                rebus => rebus
+                    .Transport(t =>
+                        t.UseRabbitMq(
+                            Configuration.GetConnectionString("MessageBroker"),
+                            "OrderPaymentQueue"))
+                    //.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
+                    //.Options(o => o.Decorate<ISerializer>(c => new CustomMessageDeserializer(c.Get<ISerializer>())))
+                    ,
+                onCreated: async bus =>
+                {
+                    //await bus.Advanced.Topics.Subscribe("OrderCreatedEvent"); // OrderCreatedEvent
+                    await bus.Subscribe<OrderCreatedEvent>();
+                    //await bus.Advanced.Topics.Subscribe("PaymentProcessedEvent");
+                });
 
             services.AddRebusHandler<OrderCreatedEventHandler>();
             //services.AutoRegisterHandlersFromAssemblyOf<OrderCreatedEventHandler>();
